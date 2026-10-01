@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-eks-app
+  namespace: app
+  labels:
+    app: gitops-eks-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gitops-eks-app
+  template:
+    metadata:
+      labels:
+        app: gitops-eks-app
+    spec:
+      containers:
+        - name: app
+          image: sufiya01/gitops-eks-app:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
